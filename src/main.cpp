@@ -1,18 +1,41 @@
-#include <Arduino.h>
+#include <WiFi.h>
 
-// put function declarations here:
-int myFunction(int, int);
+String macToShortString(uint8_t mac[])
+{
+  String characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  String shortString = "";
 
-void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+  // Convert MAC address to a base36 string
+  unsigned long long macValue = 0;
+  for (int i = 0; i < 6; i++)
+  {
+    macValue <<= 8;
+    macValue |= mac[i];
+  }
+
+  while (macValue > 0)
+  {
+    shortString = characters[macValue % 36] + shortString;
+    macValue /= 36;
+  }
+
+  return shortString;
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
+void setup()
+{
+  Serial.begin(115200);
+
+  // Set your desired MAC address here
+  uint8_t mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
+
+  // Convert MAC address to a short string
+  String shortString = macToShortString(mac);
+
+  Serial.println("Short MAC Address: " + shortString);
 }
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+void loop()
+{
+  // Your code here
 }
